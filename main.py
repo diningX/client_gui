@@ -5,31 +5,8 @@ import pandas as pd
 import streamlit as st
 from heatmaps import heatmaps
 from main2 import login_service
-from login import login
+from get_data import get_data
 
-def get_data(user_name):
-    query = db.collection('QuestionnaireResult').where('user_name', '==', user_name)
-    docs = query.get()
-
-    data = []
-    for doc in docs:
-        datum = {}
-        review_data = doc.to_dict()
-        user_data = db.collection('UserInfo').document(review_data['uId'])
-        user_data = user_data.get().to_dict()
-        datum['レビュー'] = review_data['response']['detail']
-        datum['星評価'] = review_data['response']['star']
-        datum['居住地'] = user_data["prefecture"]+user_data["municipality"]
-        datum['属性'] = user_data["affiliation"]
-        birthdata = user_data['birthday'].split('/')
-        datum['年齢'] = age(int(birthdata[0]), int(birthdata[1]), int(birthdata[2]))
-        datum['性別'] = user_data['gender']
-        datum['time'] = review_data['time'].split('T')[0]
-
-        for a in aspects:
-            datum[a] = review_data[a]
-        data.append(datum)
-    return pd.DataFrame(data=data)
 
 
 if not firebase_admin._apps:
@@ -39,9 +16,42 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-login_or_not = login(db)
-if login_or_not:
-    st.write('login 成功')
+if 'login' not in st.session_state:
+    st.session_state['login'] = 0
+if st.session_state['login'] == 0:
+    info_pass_list = {'店長' : 'BranchInfo', '経営者' : 'ClientInfo'}
+    branch_or_client = st.radio('選択', ['店長', '経営者'])
+    query = db.collection(info_pass_list[branch_or_client])
+    docs = query.get()
+    login_pass_list = {}
+    for d in docs:
+        doc = d.to_dict()
+        login_pass_list[doc['user_name']] = doc['password']
+    st.write(login_pass_list)
+    user_name = st.text_input('user name')
+    password = st.text_input('password', type="password")
+    login_button = st.button('login')
+    if login_button:
+        if user_name not in login_pass_list.keys():
+            st.write('user nameが存在しません')
+        else:
+            correct_password = login_pass_list[user_name]
+            if correct_password != password:
+                st.write('pass wordが違います。')
+            else:
+                st.session_state['login'] = 1
+                st.session_state['user_name'] = user_name
+                st.session_state['b_or_c'] = info_pass_list[branch_or_client]
+
+if st.session_state['login'] == 1:
+    option = st.selectbox('サービスを選択してください',('-', 'ヒートマップ・円グラフ', '時系列可視化'))
+    if option == 'ヒートマップ・円グラフ':
+        user_name = st.session_state['user_name']
+        b_or_c = st.session_state['b_or_c']
+        file = get_data(db, user_name, b_or_c)
+        st.write(file)
+        heatmaps(file)
+
 
             
 
