@@ -10,7 +10,7 @@ sh install_package.sh
 ```
 streamlit run main.py
 ```
-*githubにpush
+* githubにpush
 ```
 sh git_push 
 ```
