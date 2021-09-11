@@ -38,14 +38,16 @@ def heatmaps(file):
     unsafe_allow_html=True,
     )
 
-    
-    st.dataframe(file)
+    logout_button = st.sidebar.button('log out')
+    if logout_button:
+        st.session_state['login'] = 0
+    st.dataframe(file[['年齢', '性別', '属性', 'レビュー']])
     
     heat_matrix = get_heat_matrix(file)
     
     if 'CONTENT' not in st.session_state:
         keys = []
-        for i in file['レビュー']:
+        for i in file_review['レビュー']:
             keys.append(get_hinshi(i))
         CONTENT = ' '.join(keys)
         st.session_state['CONTENT'] = CONTENT
