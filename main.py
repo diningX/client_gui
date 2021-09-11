@@ -39,19 +39,9 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-
-info_list = {'店長' : 'BranchInfo', '経営者' : 'ClientInfo'}
-
-query = db.collection(info_list[branch_or_client])
-docs = query.get()
-login_pass_list = {}
-for d in docs:
-    doc = d.to_dict()
-    login_pass_list[doc['user_name']] = doc['password']
-
-st.write(login_pass_list)
-
-login_or_not = login(login_pass_list)
+login_or_not = login(db)
+if login_or_not:
+    st.write('login 成功')
 
             
 
