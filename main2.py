@@ -1,13 +1,8 @@
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
 import pandas as pd
-import streamlit as st
 from heatmaps import heatmaps
-from main2 import login_service
-from login import login
+import streamlit as st
 
-def get_data(user_name):
+def get_data(user_name, db):
     query = db.collection('QuestionnaireResult').where('user_name', '==', user_name)
     docs = query.get()
 
@@ -32,32 +27,12 @@ def get_data(user_name):
     return pd.DataFrame(data=data)
 
 
-if not firebase_admin._apps:
-
-    # 初期済みでない場合は初期化処理を行う
-    cred = credentials.Certificate('table-customer-app-development-firebase-adminsdk-w8skc-5ef3db5472.json')
-    firebase_admin.initialize_app(cred)
-db = firestore.client()
-
-
-info_list = {'店長' : 'BranchInfo', '経営者' : 'ClientInfo'}
-
-query = db.collection(info_list[branch_or_client])
-docs = query.get()
-login_pass_list = {}
-for d in docs:
-    doc = d.to_dict()
-    login_pass_list[doc['user_name']] = doc['password']
-
-st.write(login_pass_list)
-
-login_or_not = login(login_pass_list)
-
-            
-
-
-
-
-
-            
+def login_service(user_name, db):
+    st.write('店舗画面')
+    st.write('user name : ' + user_name)
+    option = st.selectbox('サービスを選択してください',('-', 'ヒートマップ・円グラフ', '時系列可視化', '抽選設定'))
+    if option == 'ヒートマップ・円グラフ':
+        print('aaaaaa')
+        file = get_data(user_name, db)
+        heatmaps(file)
 
