@@ -4,7 +4,6 @@ from firebase_admin import firestore
 import pandas as pd
 import streamlit as st
 from heatmaps import heatmaps
-from main2 import login_service
 from get_data import get_data
 
 
@@ -39,6 +38,9 @@ if st.session_state['login'] == 0:
             if correct_password != password:
                 st.write('pass wordが違います。')
             else:
+                if len(st.session_state) != 0:
+                    for k in st.session_state.keys():
+                        st.session_state.pop(k)
                 st.session_state['login'] = 1
                 st.session_state['user_name'] = user_name
                 st.session_state['b_or_c'] = info_pass_list[branch_or_client]
@@ -48,9 +50,10 @@ if st.session_state['login'] == 1:
     if option == 'ヒートマップ・円グラフ':
         user_name = st.session_state['user_name']
         b_or_c = st.session_state['b_or_c']
-        file = get_data(db, user_name, b_or_c)
-        st.write(file)
-        heatmaps(file)
+        if 'file' not in st.session_state:
+            file = get_data(db, user_name, b_or_c)
+            st.session_state['file'] = file
+        heatmaps(st.session_state['file'])
 
 
             

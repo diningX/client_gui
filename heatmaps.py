@@ -43,10 +43,13 @@ def heatmaps(file):
     
     heat_matrix = get_heat_matrix(file)
     
-    keys = []
-    for i in file['レビュー']:
-        keys.append(get_hinshi(i))
-    CONTENT = ' '.join(keys)
+    if 'CONTENT' not in st.session_state:
+        keys = []
+        for i in file['レビュー']:
+            keys.append(get_hinshi(i))
+        CONTENT = ' '.join(keys)
+        st.session_state['CONTENT'] = CONTENT
+    CONTENT = st.session_state['CONTENT']
     
 
     options = st.multiselect(
