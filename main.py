@@ -46,15 +46,21 @@ if st.session_state['login'] == 0:
                 st.session_state['b_or_c'] = info_pass_list[branch_or_client]
 
 if st.session_state['login'] == 1:
-    option = st.selectbox('サービスを選択してください',('-', 'ヒートマップ・円グラフ', '時系列可視化'))
-    if option == 'ヒートマップ・円グラフ':
-        user_name = st.session_state['user_name']
-        b_or_c = st.session_state['b_or_c']
-        if 'file' not in st.session_state:
-            file = get_data(db, user_name, b_or_c)
-            st.session_state['file'] = file
-        heatmaps(st.session_state['file'])
-
+    if st.session_state['b_or_c'] == 'BranchInfo':
+        option = st.selectbox('サービスを選択してください',('-', 'ヒートマップ・円グラフ', '時系列可視化'))
+        if option == 'ヒートマップ・円グラフ':
+            user_name = st.session_state['user_name']
+            b_or_c = st.session_state['b_or_c']
+            if 'file' not in st.session_state:
+                file = get_data(db, user_name, b_or_c)
+                st.session_state['file'] = file
+            heatmaps(st.session_state['file'])
+    
+    else:
+        st.write('実装中')
+        logout = st.button('logout')
+        if logout:
+            st.session_state['login'] = 0
 
             
 
