@@ -12,5 +12,5 @@ streamlit run main.py
 ```
 * githubにpush ※masterブランチの場合は要注意!!
 ```
-sh git_push 
+sh git_push.sh
 ```
