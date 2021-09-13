@@ -1,4 +1,4 @@
-import streamlit as st
+#import streamlit as st
 import datetime
 import pandas as pd
 
@@ -16,9 +16,9 @@ aspects = ['Location#Transportation', 'Location#Downtown', 'Location#Easy_to_fin
 def get_data(db, user_name, b_or_c):
     _ = db.collection(b_or_c).where('user_name', '==', user_name).get()
     for d in _:
-        document_id = d.id
+        bId = d.id
         
-    query = db.collection(b_or_c).document(document_id)
+    query = db.collection('QuestionnaireResult').where('bId', '==', bId).where('isProcessedByAI', '==', True)
     docs = query.get()
 
     data = []
