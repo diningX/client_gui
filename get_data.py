@@ -16,9 +16,9 @@ aspects = ['Location#Transportation', 'Location#Downtown', 'Location#Easy_to_fin
 def get_data(db, user_name, b_or_c):
     _ = db.collection(b_or_c).where('user_name', '==', user_name).get()
     for d in _:
-        bId = d.id
+        document_id = d.id
         
-    query = db.collection('QuestionnaireResult').where('bId', '==', bId).where('isProcessedByAI', '==', True)
+    query = db.collection(b_or_c).document(document_id)
     docs = query.get()
 
     data = []
