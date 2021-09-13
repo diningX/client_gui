@@ -5,6 +5,7 @@ from user_heatmap import get_heatmap, get_starmap, get_heat_matrix, get_aspectma
 from freq_words_extract import get_freq_words, no_a, no_n, no_v
 from janome.tokenizer import Tokenizer
 
+
 def get_hinshi(text):
     t = Tokenizer()
     keys = []

@@ -29,6 +29,11 @@ def make_date_column(start, end):
     return date2
 
 def time_series(df1):
+
+    
+    logout_button = st.sidebar.button('log out')
+    if logout_button:
+        st.session_state['login'] = 0
     
     st.write('各種時系列')
     dfa=df1[['time','星評価']].set_index('time')
