@@ -20,8 +20,8 @@ st.session_state['db'] = firestore.client()
 if 'login' not in st.session_state:
     st.session_state['login'] = 0
 if st.session_state['login'] == 0:
-    info_pass_list = {'店長' : 'BranchInfo', '経営者' : 'ClientInfo'}
-    branch_or_client = st.radio('選択', ['店長', '経営者'])
+    info_pass_list = {'店長' : 'BranchInfo', 'オーナー' : 'ClientInfo'}
+    branch_or_client = st.radio('選択', ['店長', 'オーナー'])
     query = st.session_state['db'].collection(info_pass_list[branch_or_client])
     docs = query.get()
     login_pass_list = {}
