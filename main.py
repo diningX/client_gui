@@ -7,6 +7,7 @@ from heatmaps import heatmaps
 from get_data import get_data
 from time_series import time_series
 from lottery_settings import lottery_settings
+from get_q_detail import get_q_detail
 
 
 if not firebase_admin._apps:
@@ -62,6 +63,12 @@ if st.session_state['login'] == 1:
                 file = get_data(st.session_state['db'], st.session_state['user_name'], st.session_state['b_or_c'])
                 st.session_state['file'] = file
             time_series(st.session_state['file'])
+        
+        if option == 'アンケート個別表示':
+            if 'file' not in st.session_state:
+                file = get_data(st.session_state['db'], st.session_state['user_name'], st.session_state['b_or_c'])
+                st.session_state['file'] = file
+            get_q_detail(st.session_state['file'])
 
         if option == '抽選設定':
             lottery_settings(st.session_state['db'], st.session_state['user_name'], st.session_state['b_or_c'])
