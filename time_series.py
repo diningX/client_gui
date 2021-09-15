@@ -123,8 +123,8 @@ def time_series(df1):
     
     if len(date_option) > 4:
         right, left = st.columns(2)
-        start = right.selectbox('開始日', options=date_option[:-1])
-        end = left.selectbox('終了日', options=date_option)
+        start = right.selectbox('開始', options=date_option[:-1])
+        end = left.selectbox('終了', options=date_option)
         
         start_sp = start.split('/')
         end_sp = end.split('/')
