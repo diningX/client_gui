@@ -10,13 +10,16 @@ no_a = ['']
 
 
 def get_freq_words(CONTENT, num, col):
-    c = collections.Counter(CONTENT.split(' '))
+    content_list = [i for i in CONTENT.split(' ') if i != '']
+    
+    c = collections.Counter(content_list)
     most_c = c.most_common()[:num]
     expander = col.expander('頻出単語(件数)')
     for i in range(len(most_c)):
         expander.write(most_c[i][0]+'('+str(most_c[i][1])+')')
 
 def get_freq_words_(CONTENT, num):
-    c = collections.Counter(CONTENT.split(' '))
+    content_list = [i for i in CONTENT.split(' ') if i != '']
+    c = collections.Counter(content_list)
     most_c = c.most_common()[:num]
     return [most_c[i][0]+'('+str(most_c[i][1])+')' for i in range(len(most_c))]

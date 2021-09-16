@@ -36,7 +36,11 @@ def make_term_data(df, term):
     df['date'] = df['date'].dt.strftime("%Y-%m-%d")
     dfa=df[['date','星評価']]
     dfa=dfa.groupby('date').mean()
-    start, end=dfa.index[0],dfa.index[-1]
+    print(dfa)
+    if len(dfa) != 0:
+        start, end=dfa.index[0],dfa.index[-1]
+    else:
+        start, end=dfa.index[0],dfa.index[0]
     date=make_date_column(start,end)
     date['trash']=1
     date["date"] = pd.to_datetime(date["date"]) #datetime型にする
@@ -121,18 +125,21 @@ def time_series(df1):
     date_range = np.sort(list(set([dt.strptime(str(i.year)+'-'+str(i.month)+'-'+'01', '%Y-%m-%d') for i in list(daterange(start_, end_))])))
     date_option = [str(i)[:7].replace('-','/') for i in date_range]
     
-    if len(date_option) > 4:
-        right, left = st.columns(2)
-        start = right.selectbox('開始', options=date_option[:-1])
-        end = left.selectbox('終了', options=date_option)
-        
-        start_sp = start.split('/')
-        end_sp = end.split('/')
+    
+    right, left = st.columns(2)
+    start = right.selectbox('開始', options=date_option[:-1])
+    date_option_end = [i for i in date_option if i != start]
+    end = left.selectbox('終了', options=date_option_end)
+    
+    start_sp = start.split('/')
+    end_sp = end.split('/')
 
-        start = dt.strptime(str(start_sp[0])+'-'+str(start_sp[1])+'-'+'01', '%Y-%m-%d')
-        end = dt.strptime(str(end_sp[0])+'-'+str(end_sp[1])+'-'+'01', '%Y-%m-%d')
-        if start > end:
-            start, end = end, start
+    start = dt.strptime(str(start_sp[0])+'-'+str(start_sp[1])+'-'+'01', '%Y-%m-%d')
+    end = dt.strptime(str(end_sp[0])+'-'+str(end_sp[1])+'-'+'01', '%Y-%m-%d')
+    if start > end:
+        start, end = end, start
+ 
+
     df1 = df1[df1['date'] >= start]
     df1 = df1[df1['date']<= end]
     

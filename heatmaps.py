@@ -46,13 +46,16 @@ def heatmaps(file):
     
     heat_matrix = get_heat_matrix(file)
     
-    if 'CONTENT' not in st.session_state:
+    if 'file_review' not in st.session_state:
+        file_review = file[file['Ambience#Decoration']!='-']
+        st.session_state['file_review'] = file_review[['年齢', '性別', '所属', 'レビュー']]
         keys = []
-        for i in file_review['レビュー']:
+        for i in st.session_state['file_review']['レビュー']:
             keys.append(get_hinshi(i))
         CONTENT = ' '.join(keys)
+        st.session_state['file_review']['janome'] = keys
+        
         st.session_state['CONTENT'] = CONTENT
-    CONTENT = st.session_state['CONTENT']
     
 
     options = st.multiselect(
@@ -80,7 +83,7 @@ def heatmaps(file):
     if '頻出単語' in options_side:
         num = st.sidebar.number_input('表示する件数', min_value=0, step=1)
         if num > 0:
-            get_freq_words(CONTENT, num, st.sidebar)
+            get_freq_words(st.session_state['CONTENT'], num, st.sidebar)
     options2 = options.copy()
     for i in options:
         if i in ['客層ヒートマップ', '星評価ヒートマップ', '所属項目可視化マップ', '項目別店舗評価']:

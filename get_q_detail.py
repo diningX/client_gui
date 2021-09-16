@@ -3,7 +3,7 @@ import pandas as pd
 from freq_words_extract import get_freq_words_, no_a, no_n, no_v
 from janome.tokenizer import Tokenizer
 
-review_columns = ['年齢', '性別', '所属', 'レビュー']
+review_columns = ['年齢', '性別', '所属', 'レビュー', 'janome']
 def get_hinshi(text):
     t = Tokenizer()
     keys = []
@@ -20,18 +20,17 @@ def get_hinshi(text):
     return ' '.join(keys)
 
 def make_word_df(file, words):
-    
     data = []
     for i in range(len(file)):
         review_text = file.iloc[i, 3]
-        print(review_text)
+        #print(file.iloc[i, :])
         m = 0
         for word in words:
-            if word in review_text:
+            if word in file.iloc[i, 4]:
                 m += 1
             if m == len(words):
                 datum = {}
-                for c in range(4):
+                for c in range(5):
                     datum[review_columns[c]] = file.iloc[i, c]
                 data.append(datum)
     return pd.DataFrame(data=data)
@@ -42,7 +41,7 @@ def make_gender_df(file, gender):
         g = file.iloc[i, 1]
         if g in gender:
             datum = {}
-            for j in range(4):
+            for j in range(5):
                 datum[review_columns[j]] = file.iloc[i, j]
             data.append(datum)
     if len(data) == 0:
@@ -57,7 +56,7 @@ def make_affiliation_df(file, affiliation):
         g = file.iloc[i, 2]
         if g in affiliation:
             datum = {}
-            for j in range(4):
+            for j in range(5):
                 datum[review_columns[j]] = file.iloc[i, j]
             data.append(datum)
     if len(data) == 0:
@@ -72,7 +71,7 @@ def make_age_df(file, age_list):
         g = 10*int(g/10)
         if g in age_list:
             datum = {}
-            for j in range(4):
+            for j in range(5):
                 datum[review_columns[j]] = file.iloc[i, j]
             data.append(datum)
     if len(data) == 0:
@@ -93,12 +92,22 @@ def get_q_detail(file):
     if 'file_review' not in st.session_state:
         file_review = file[file['Ambience#Decoration']!='-']
         st.session_state['file_review'] = file_review[['年齢', '性別', '所属', 'レビュー']]
+        keys = []
+        for i in st.session_state['file_review']['レビュー']:
+            keys.append(get_hinshi(i))
+        CONTENT = ' '.join(keys)
+        st.session_state['file_review']['janome'] = keys
+        
+        st.session_state['CONTENT'] = CONTENT
+
 
     if 'CONTENT' not in st.session_state:
         keys = []
         for i in st.session_state['file_review']['レビュー']:
             keys.append(get_hinshi(i))
         CONTENT = ' '.join(keys)
+        st.session_state['file_review']['janome'] = keys
+        
         st.session_state['CONTENT'] = CONTENT
 
 
@@ -110,7 +119,10 @@ def get_q_detail(file):
 
     show_all = st.sidebar.radio('全てのレビューを表示', options=['する', 'しない'])
     if show_all == 'する':
-        st.table(st.session_state['file_review'])
+        show_df = st.session_state['file_review'][['年齢', '性別', '所属', 'レビュー']]
+        show_df['index'] = [i+1 for i in range(len(show_df))]
+        show_df = show_df.set_index('index')
+        st.table(show_df)
     else:
 
         default_gender = st.session_state['file_review']['性別'].unique()
@@ -121,6 +133,7 @@ def get_q_detail(file):
         affiliation = st.sidebar.multiselect('所属による絞り込み', options=default_affiliation, default=default_affiliation)
         age_list = st.sidebar.multiselect('年代による絞り込み', options=default_age, default=default_age)
         show_df = filter_df(st.session_state['file_review'], gender, affiliation, age_list)
+
         word_select = st.sidebar.checkbox('頻出単語による絞り込みを行う')
         if word_select:
             num = st.sidebar.number_input('頻出単語の表示する件数（多い順）', min_value=0, step=1)
@@ -128,7 +141,11 @@ def get_q_detail(file):
             selected_words = st.sidebar.multiselect('頻出単語による絞り込み', options=options)
             selected_words = [i.split('(')[0] for i in selected_words]
             show_df = make_word_df(show_df, selected_words)
+        if len(show_df) == 0:
+            show_df = pd.DataFrame(data=[], columns=review_columns)
         show_df = show_df.rename(columns={'属性': '所属'})
-        st.table(show_df)
+        show_df['index'] = [i+1 for i in range(len(show_df))]
+        show_df = show_df.set_index('index')
+        st.table(show_df[['年齢', '性別', '所属', 'レビュー']])
         st.sidebar.write('レビュー表示件数：' + str(len(show_df)), ' 件')
     #st.table(st.session_state['file_review'][['年齢', '性別', '所属', 'レビュー']])
