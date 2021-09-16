@@ -33,7 +33,7 @@ def get_data(db, user_name, b_or_c):
             datum['レビュー'] = review_data['response']['detail']
             datum['星評価'] = review_data['response']['star']
             datum['居住地'] = user_data["prefecture"]+user_data["municipality"]
-            datum['属性'] = user_data["affiliation"]
+            datum['所属'] = user_data["affiliation"]
             birthdata = user_data['birthday'].split('/')
             datum['年齢'] = age(int(birthdata[0]), int(birthdata[1]), int(birthdata[2]))
             datum['性別'] = user_data['gender']

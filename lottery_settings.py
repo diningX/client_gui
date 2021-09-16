@@ -21,8 +21,8 @@ def lottery_settings(db, user_name, b_or_c):
         st.session_state['save_button'] = False
     
     print(st.session_state['branch_data'])
-    lottery_discount = st.number_input('抽選割引率(%)', value=int(st.session_state['branch_data']['lotteryDiscount']*100), min_value=0, max_value=100)
     lottery_probability = st.number_input('抽選確率(%)', value=int(st.session_state['branch_data']['lotteryProbability']*100), min_value=0, max_value=100)
+    lottery_discount = st.number_input('抽選割引率(%)', value=int(st.session_state['branch_data']['lotteryDiscount']*100), min_value=0, max_value=100)
     questionare_DiscountRate = st.number_input('アンケート割引率(%)', value=int(st.session_state['branch_data']['questionnaireDiscountRate']*100), min_value=0, max_value=100)
 
     home_page_url = st.text_input('ホームページ URL', value=st.session_state['branch_data']['sns'][0])

@@ -50,11 +50,11 @@ def make_df_new(df, term):
     df["date"] = pd.to_datetime(df["date"]) #datetime型にする
     df_new=df[['date','星評価']]
     df_new=df_new.groupby('date').mean()
-    df_new=df_new.resample(term).sum()
+    df_new=df_new.resample(term).mean()
     df_new=pd.merge(date,df_new,on='date', how='outer').drop('trash',axis=1)
     
     
-    for name in ['属性','性別']:
+    for name in ['所属','性別']:
         dfb=df[['date',name]]
         dfb['num']=1
         dfb=dfb.groupby(['date',name]).sum()
@@ -95,7 +95,7 @@ def make_plot(df_all):
     fig.update_layout(legend_title_text='タイトル')
     fig.show()
     fig = go.Figure()
-    for name in df['属性'].unique().tolist():
+    for name in df['所属'].unique().tolist():
         fig.add_trace(go.Scatter(y=df_all[name],x=df_all.index, name=name))
     fig.show()
     fig = go.Figure()
@@ -150,9 +150,9 @@ def time_series(df1):
     
 
 
-    df_all['星評価'] = df_all['星評価'] / df_all[not_star].sum(axis=1)
+    #df_all['星評価'] = df_all['星評価'] / df_all[not_star].sum(axis=1)
 
-    names = st.multiselect('属性を選択してください',df_all.columns)
+    names = st.multiselect('項目を選択してください',df_all.columns)
     fig = go.Figure()
     for name in names:
         fig.add_trace(go.Scatter(y=df_all[name],x=df_all.index, name=name))
