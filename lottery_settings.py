@@ -44,5 +44,6 @@ def lottery_settings(db, user_name, b_or_c):
         st.session_state['branch_data']['sns'][4] = instagram_url
 
         st.session_state['query'].document(st.session_state['bId']).set(st.session_state['branch_data'])
+        st.write('保存しました！')
 
 

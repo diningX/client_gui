@@ -36,7 +36,7 @@ def make_term_data(df, term):
     df['date'] = df['date'].dt.strftime("%Y-%m-%d")
     dfa=df[['date','星評価']]
     dfa=dfa.groupby('date').mean()
-    print(dfa)
+
     if len(dfa) != 0:
         start, end=dfa.index[0],dfa.index[-1]
     else:
@@ -127,9 +127,8 @@ def time_series(df1):
     
     
     right, left = st.columns(2)
-    start = right.selectbox('開始', options=date_option[:-1])
-    date_option_end = [i for i in date_option if i != start]
-    end = left.selectbox('終了', options=date_option_end)
+    start = right.selectbox('開始', options=date_option)
+    end = left.selectbox('終了', options=date_option)
     
     start_sp = start.split('/')
     end_sp = end.split('/')
@@ -138,6 +137,8 @@ def time_series(df1):
     end = dt.strptime(str(end_sp[0])+'-'+str(end_sp[1])+'-'+'01', '%Y-%m-%d')
     if start > end:
         start, end = end, start
+    elif start == end:
+        end = start + timedelta(weeks=5)
  
 
     df1 = df1[df1['date'] >= start]
