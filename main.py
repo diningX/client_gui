@@ -13,7 +13,7 @@ import json
 
 
 if not firebase_admin._apps:
-
+    
     # 初期済みでない場合は初期化処理を行う
     keys = {
     "type": os.environ.get('type'),
@@ -30,7 +30,7 @@ if not firebase_admin._apps:
     #print(type(keys))
 
     json_open = open('keys.json', 'w')
-    json.dump(keys, json_open)
+    json.dump(keys, json_open, indent=2)
     json_open.close()
     #json_open = open('keys.json', 'r')
     #json_file = json.load(json_open)
@@ -38,7 +38,7 @@ if not firebase_admin._apps:
     #print(json_file)
     #print('=========================')
 
-    cred = credentials.Certificate('keys.json')
+    cred = credentials.Certificate("keys.json")
     firebase_admin.initialize_app(cred)
 
 st.session_state['db'] = firestore.client()
