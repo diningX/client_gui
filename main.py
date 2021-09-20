@@ -41,7 +41,7 @@ if not firebase_admin._apps:
     #print(json_file)
     #print('=========================')
 
-    cred = credentials.Certificate(keys)
+    cred = credentials.Certificate(json.loads(os.environ['FIREBASE_CONFIG']))
     firebase_admin.initialize_app(cred)
 
 st.session_state['db'] = firestore.client()
