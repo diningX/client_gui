@@ -43,7 +43,6 @@ if not firebase_admin._apps:
 
     cred = credentials.Certificate(keys)
     firebase_admin.initialize_app(cred)
-    print()
 
 st.session_state['db'] = firestore.client()
 
