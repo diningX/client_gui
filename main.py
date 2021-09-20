@@ -16,7 +16,7 @@ if not firebase_admin._apps:
 
     # 初期済みでない場合は初期化処理を行う
     keys = {
-    "type": os.environ.get('type')
+    "type": os.environ.get('type'),
     "project_id": os.environ.get('project_id'),
     "private_key_id": os.environ.get('private_key_id'),
     "private_key": os.environ.get('private_key'),
