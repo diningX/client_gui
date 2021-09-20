@@ -10,9 +10,12 @@ from lottery_settings import lottery_settings
 from get_q_detail import get_q_detail
 import os
 import json
+from dotenv import load_dotenv
+load_dotenv(override=True)
 
 
 if not firebase_admin._apps:
+
     
     # 初期済みでない場合は初期化処理を行う
     keys = {
@@ -29,17 +32,18 @@ if not firebase_admin._apps:
     }
     #print(type(keys))
 
-    json_open = open('keys.json', 'w')
-    json.dump(keys, json_open, indent=2)
-    json_open.close()
+    #json_open = open('keys.json', 'w')
+    #json.dump(keys, json_open, indent=2)
+    #json_open.close()
     #json_open = open('keys.json', 'r')
     #json_file = json.load(json_open)
     #print('=========================')
     #print(json_file)
     #print('=========================')
 
-    cred = credentials.Certificate("keys.json")
+    cred = credentials.Certificate(keys)
     firebase_admin.initialize_app(cred)
+    print()
 
 st.session_state['db'] = firestore.client()
 
@@ -54,7 +58,7 @@ if st.session_state['login'] == 0:
     for d in docs:
         doc = d.to_dict()
         login_pass_list[doc['user_name']] = doc['password']
-    st.write(login_pass_list)
+    #st.write(login_pass_list)
     user_name = st.text_input('user name')
     password = st.text_input('password', type="password")
     login_button = st.button('login')
