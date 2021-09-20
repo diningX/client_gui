@@ -8,12 +8,28 @@ from get_data import get_data
 from time_series import time_series
 from lottery_settings import lottery_settings
 from get_q_detail import get_q_detail
+import os
+import json
 
 
 if not firebase_admin._apps:
 
     # 初期済みでない場合は初期化処理を行う
-    cred = credentials.Certificate('table-customer-app-development-firebase-adminsdk-w8skc-5ef3db5472.json')
+    keys = {
+        "type": os.environ.get("type"),
+        "project_id": os.environ.get("project_id"),
+        "private_key_id": os.environ.get("private_key_id"),
+        "private_key": os.environ.get("private_key"),
+        "client_email": os.environ.get("client_email"),
+        "client_id": os.environ.get("client_id"),
+        "auth_uri": os.environ.get("auth_uri"),
+        "token_uri": os.environ.get("token_uri"),
+        "auth_provider_x509_cert_url": os.environ.get("auth_provider_x509_cert_url"),
+        "client_x509_cert_url": os.environ.get("client_x509_cert_url")
+        }
+    json_file = open('keys.json', 'w')
+    json.dump(keys, json_file)
+    cred = credentials.Certificate('keys.json')
     firebase_admin.initialize_app(cred)
 
 st.session_state['db'] = firestore.client()
