@@ -10,8 +10,7 @@ from lottery_settings import lottery_settings
 from get_q_detail import get_q_detail
 import os
 import json
-from dotenv import load_dotenv
-load_dotenv(override=True)
+
 
 
 if not firebase_admin._apps:

@@ -3,4 +3,3 @@ plotly
 janome
 firebase-admin
 google-cloud-firestore
-python-dotenv
