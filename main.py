@@ -16,19 +16,28 @@ if not firebase_admin._apps:
 
     # 初期済みでない場合は初期化処理を行う
     keys = {
-        "type": os.environ.get("type"),
-        "project_id": os.environ.get("project_id"),
-        "private_key_id": os.environ.get("private_key_id"),
-        "private_key": os.environ.get("private_key"),
-        "client_email": os.environ.get("client_email"),
-        "client_id": os.environ.get("client_id"),
-        "auth_uri": os.environ.get("auth_uri"),
-        "token_uri": os.environ.get("token_uri"),
-        "auth_provider_x509_cert_url": os.environ.get("auth_provider_x509_cert_url"),
-        "client_x509_cert_url": os.environ.get("client_x509_cert_url")
-        }
-    json_file = open('keys.json', 'w')
-    json.dump(keys, json_file)
+    "type": os.environ.get('type')
+    "project_id": os.environ.get('project_id'),
+    "private_key_id": os.environ.get('private_key_id'),
+    "private_key": os.environ.get('private_key'),
+    "client_email": os.environ.get('client_email'),
+    "client_id": os.environ.get('client_id'),
+    "auth_uri": os.environ.get('auth_uri'),
+    "token_uri": os.environ.get('token_uri'),
+    "auth_provider_x509_cert_url": os.environ.get('auth_provider_x509_cert_url'),
+    "client_x509_cert_url": os.environ.get('client_x509_cert_url')
+    }
+    #print(type(keys))
+
+    json_open = open('keys.json', 'w')
+    json.dump(keys, json_open)
+    json_open.close()
+    #json_open = open('keys.json', 'r')
+    #json_file = json.load(json_open)
+    #print('=========================')
+    #print(json_file)
+    #print('=========================')
+
     cred = credentials.Certificate('keys.json')
     firebase_admin.initialize_app(cred)
 
