@@ -50,8 +50,12 @@ def make_term_data(df, term):
     return date
 
 def make_df_new(df, term):
+
+
     date=make_term_data(df, term)
     df["date"] = pd.to_datetime(df["date"]) #datetime型にする
+
+
     df_new=df[['date','星評価']]
     df_new=df_new.groupby('date').mean()
     df_new=df_new.resample(term).mean()
@@ -78,11 +82,15 @@ def make_df_new(df, term):
     dfs[name]=pd.cut(dfs[name],np.arange(0, n+10, 10),labels=labels)
     dfs=dfs.groupby(['date',name]).sum()
     
+  
+
     for belongs in labels:
         a=dfs.xs(belongs,level=name).rename(columns={'num':  belongs})
         b=a.resample(term).sum()
         df_new=pd.merge(df_new,b,on='date', how='outer')
-    df_new=df_new.fillna(0).astype(int)
+    df_new=df_new.fillna(0).astype(float)
+
+
 
     
     
