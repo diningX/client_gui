@@ -5,6 +5,7 @@ from janome.tokenizer import Tokenizer
 import numpy as np
 from datetime import datetime as dt
 from datetime import timedelta
+from stqdm import stqdm
 
 review_columns = ['年齢', '性別', '職業', 'レビュー', 'janome', '星評価', '居住地', 'date']
 def get_hinshi(text):
@@ -24,7 +25,7 @@ def get_hinshi(text):
 
 def make_word_df(file, words):
     data = []
-    for i in range(len(file)):
+    for i in stqdm(range(len(file))):
         review_text = file.iloc[i, 3]
         #print(file.iloc[i, :])
         m = 0
