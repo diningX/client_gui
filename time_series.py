@@ -185,7 +185,7 @@ def time_series(df1):
     end_ = df1['date'].max()
     date_range = np.sort(list(set([dt.strptime(str(i.year)+'-'+str(i.month)+'-'+'01', '%Y-%m-%d') for i in list(daterange(start_, end_))])))
     date_option = [str(i)[:7].replace('-','/') for i in date_range]
-    
+    date_option = [i+'/01' for i in date_option]
     
     right, left = st.columns(2)
     start = right.selectbox('開始', options=date_option)
