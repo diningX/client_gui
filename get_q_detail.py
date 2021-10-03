@@ -2,8 +2,11 @@ import streamlit as st
 import pandas as pd
 from freq_words_extract import get_freq_words_, no_a, no_n, no_v
 from janome.tokenizer import Tokenizer
+import numpy as np
+from datetime import datetime as dt
+from datetime import timedelta
 
-review_columns = ['年齢', '性別', '所属', 'レビュー', 'janome']
+review_columns = ['年齢', '性別', '所属', 'レビュー', 'janome', '星評価', '居住地', 'date']
 def get_hinshi(text):
     t = Tokenizer()
     keys = []
@@ -30,7 +33,7 @@ def make_word_df(file, words):
                 m += 1
             if m == len(words):
                 datum = {}
-                for c in range(5):
+                for c in range(8):
                     datum[review_columns[c]] = file.iloc[i, c]
                 data.append(datum)
     return pd.DataFrame(data=data)
@@ -41,8 +44,9 @@ def make_gender_df(file, gender):
         g = file.iloc[i, 1]
         if g in gender:
             datum = {}
-            for j in range(5):
+            for j in range(8):
                 datum[review_columns[j]] = file.iloc[i, j]
+                
             data.append(datum)
     if len(data) == 0:
         return pd.DataFrame(data = data, columns=review_columns)
@@ -50,13 +54,14 @@ def make_gender_df(file, gender):
         return pd.DataFrame(data = data)
 
     return file[file['性別'] in gender]
+
 def make_affiliation_df(file, affiliation):
     data = []
     for i in range(len(file)):
         g = file.iloc[i, 2]
         if g in affiliation:
             datum = {}
-            for j in range(5):
+            for j in range(8):
                 datum[review_columns[j]] = file.iloc[i, j]
             data.append(datum)
     if len(data) == 0:
@@ -71,7 +76,7 @@ def make_age_df(file, age_list):
         g = 10*int(g/10)
         if g in age_list:
             datum = {}
-            for j in range(5):
+            for j in range(8):
                 datum[review_columns[j]] = file.iloc[i, j]
             data.append(datum)
     if len(data) == 0:
@@ -85,10 +90,13 @@ def filter_df(file, gender, affiliation, age_list):
     file = make_age_df(file, age_list)
     return file
 
+def daterange(_start, _end):
+    for n in range((_end - _start).days):
+        yield _start + timedelta(n)
 
 pd.get_option("display.max_columns")
 def get_q_detail(file):
-
+    st.write(st.session_state['file'])
     if 'file_review' not in st.session_state:
         file_review = file[file['Ambience#Decoration']!='-']
         st.session_state['file_review'] = file_review[['年齢', '性別', '所属', 'レビュー']]
@@ -97,10 +105,14 @@ def get_q_detail(file):
             keys.append(get_hinshi(i))
         CONTENT = ' '.join(keys)
         st.session_state['file_review']['janome'] = keys
+        for c in ['星評価', '居住地']:
+            st.session_state['file_review'][c] = file_review[c]
+        
+        st.session_state['file_review']['date'] = pd.to_datetime(file_review['time'])
         
         st.session_state['CONTENT'] = CONTENT
 
-
+    st.dataframe(st.session_state['file_review'])
     if 'CONTENT' not in st.session_state:
         keys = []
         for i in st.session_state['file_review']['レビュー']:
@@ -117,13 +129,22 @@ def get_q_detail(file):
 
     
 
-    show_all = st.sidebar.radio('全てのレビューを表示', options=['する', 'しない'])
-    if show_all == 'する':
-        show_df = st.session_state['file_review'][['年齢', '性別', '所属', 'レビュー']]
+    show_all = st.sidebar.radio('レビューの絞り込み', options=['しない', 'する'])
+    if show_all == 'しない':
+        show_df = st.session_state['file_review'][['年齢', '性別', '所属', 'レビュー', '星評価', '居住地', 'date']]
         show_df['index'] = [i+1 for i in range(len(show_df))]
         show_df = show_df.set_index('index')
         st.table(show_df)
     else:
+        st.session_state['file_review'] = st.session_state['file_review'][review_columns]
+        st.dataframe(st.session_state['file_review'])
+        start_ = st.session_state['file_review']['date'].min()
+        end_ = st.session_state['file_review']['date'].max()
+    
+        date_range = np.sort(list(set([dt.strptime(str(i.year)+'-'+str(i.month)+'-'+'01', '%Y-%m-%d') for i in list(daterange(start_, end_))])))
+        date_option = [str(i)[:7].replace('-','/') for i in date_range]
+        date_option = [i+'/01' for i in date_option]
+     
 
         default_gender = st.session_state['file_review']['性別'].unique()
         default_affiliation = st.session_state['file_review']['所属'].unique()
@@ -132,7 +153,27 @@ def get_q_detail(file):
         gender = st.sidebar.multiselect('性別による絞り込み', options=default_gender, default=default_gender)
         affiliation = st.sidebar.multiselect('所属による絞り込み', options=default_affiliation, default=default_affiliation)
         age_list = st.sidebar.multiselect('年代による絞り込み', options=default_age, default=default_age)
-        show_df = filter_df(st.session_state['file_review'], gender, affiliation, age_list)
+        show_df = filter_df(st.session_state['file_review'][review_columns], gender, affiliation, age_list)
+        
+        start = st.sidebar.selectbox('開始', options=date_option)
+        end = st.sidebar.selectbox('終了', options=date_option)
+        start_sp = start.split('/')
+        end_sp = end.split('/')
+
+        start = dt.strptime(str(start_sp[0])+'-'+str(start_sp[1])+'-'+'01', '%Y-%m-%d')
+        end = dt.strptime(str(end_sp[0])+'-'+str(end_sp[1])+'-'+'01', '%Y-%m-%d')
+
+        if start > end:
+            start, end = end, start
+        elif start == end:
+            end = start + timedelta(weeks=5)
+        #show_df['date'] = pd.to_datetime(show_df['date'])
+        print(type(show_df['date'][0]))
+        print(type(start))
+        show_df = show_df[show_df['date'] >= start]
+        show_df = show_df[show_df['date'] <= end]
+
+
 
         word_select = st.sidebar.checkbox('頻出単語による絞り込みを行う')
         if word_select:
@@ -146,6 +187,6 @@ def get_q_detail(file):
         show_df = show_df.rename(columns={'属性': '所属'})
         show_df['index'] = [i+1 for i in range(len(show_df))]
         show_df = show_df.set_index('index')
-        st.table(show_df[['年齢', '性別', '所属', 'レビュー']])
+        st.table(show_df[['年齢', '性別', '所属', 'レビュー', '星評価', '居住地', 'date']])
         st.sidebar.write('レビュー表示件数：' + str(len(show_df)), ' 件')
     #st.table(st.session_state['file_review'][['年齢', '性別', '所属', 'レビュー']])
