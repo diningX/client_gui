@@ -10,7 +10,7 @@ from lottery_settings import lottery_settings
 from get_q_detail import get_q_detail
 import os
 import json
-
+from secret.secret import keys as KEYS 
 
 
 if not firebase_admin._apps:
@@ -29,7 +29,7 @@ if not firebase_admin._apps:
     "auth_provider_x509_cert_url": os.environ.get('auth_provider_x509_cert_url'),
     "client_x509_cert_url": os.environ.get('client_x509_cert_url')
     }
-    
+    keys = KEYS
     
     #print(type(keys))
 
