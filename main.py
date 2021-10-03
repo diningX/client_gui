@@ -10,9 +10,7 @@ from lottery_settings import lottery_settings
 from get_q_detail import get_q_detail
 import os
 import json
-from secret.secret import keys as KEYS
 from stqdm import stqdm
-
 
 if not firebase_admin._apps:
 
@@ -30,7 +28,9 @@ if not firebase_admin._apps:
     "auth_provider_x509_cert_url": os.environ.get('auth_provider_x509_cert_url'),
     "client_x509_cert_url": os.environ.get('client_x509_cert_url')
     }
-    keys = KEYS
+    if os.environ.get('isDeployment') is None:
+        from secret.secret import keys as KEYS
+        keys = KEYS
     
     #print(type(keys))
 
@@ -42,11 +42,12 @@ if not firebase_admin._apps:
     #print('=========================')
     #print(json_file)
     #print('=========================')
-    keys=KEYS
     cred = credentials.Certificate(keys)
     firebase_admin.initialize_app(cred)
+    
 
-st.session_state['db'] = firestore.client()
+if 'db' not in st.session_state:
+    st.session_state['db'] = firestore.client()
 
 if 'login' not in st.session_state:
     st.session_state['login'] = 0
@@ -73,14 +74,20 @@ if st.session_state['login'] == 0:
             else:
                 if len(st.session_state) != 0:
                     for k in st.session_state.keys():
-                        st.session_state.pop(k)
+                        if k != "db":
+                            st.session_state.pop(k)
                 st.session_state['login'] = 1
                 st.session_state['user_name'] = user_name
                 st.session_state['b_or_c'] = info_pass_list[branch_or_client]
 
 if st.session_state['login'] == 1:
     if st.session_state['b_or_c'] == 'BranchInfo':
-        option = st.selectbox('サービスを選択してください',('-', 'ヒートマップ・円グラフ', '時系列可視化', 'レビュー個別表示', '各種設定'))
+        if 'file' not in st.session_state:
+            file = get_data(st.session_state['db'], st.session_state['user_name'], st.session_state['b_or_c'])
+            st.session_state['file'] = file
+        st.header(st.session_state['branchName'])
+        st.subheader('サービスを選択してください')
+        option = st.selectbox('',('-', 'ヒートマップ・円グラフ', '時系列可視化', 'レビュー個別表示', '各種設定'))
         if option == 'ヒートマップ・円グラフ':
 
             if 'file' not in st.session_state:

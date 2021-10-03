@@ -29,7 +29,7 @@ def get_d(reviews):
         for age in ages:
             ages_list.append(10 * np.int(age))
         ages = np.sort(list(set(ages_list)))
-        zokuseis = reviews['所属'].unique()
+        zokuseis = reviews['職業'].unique()
         seibetsus = reviews['性別'].unique()
         data = {}
         m = 0
@@ -58,7 +58,7 @@ def get_heat_matrix(reviews):
         heat_matrix = np.zeros((len(data), len(data)))
         for i in range(len(reviews)):
             age = reviews['年齢'][i]
-            zokusei = reviews['所属'][i]
+            zokusei = reviews['職業'][i]
             seibetsu = reviews['性別'][i]
 
             age = str(10 * int(age / 10))
@@ -91,7 +91,7 @@ def get_starmap(reviews, heat_matrix):
         s_m_5 = np.zeros((5, len(data)))
         for i in range(len(reviews)):
             age = reviews['年齢'][i]
-            zokusei = reviews['所属'][i]
+            zokusei = reviews['職業'][i]
             seibetsu = reviews['性別'][i]
             age = str(10 * int(age / 10))
             star = int(reviews['星評価'][i] - 1)
@@ -126,7 +126,7 @@ def get_aspectmap(reviews):
         seibetsu_list = []
         zokusei_list = []
         
-        for z in reviews['所属']:
+        for z in reviews['職業']:
             zokusei_list.append(z)
         for s in reviews['性別']:
             seibetsu_list.append(s)
@@ -136,7 +136,7 @@ def get_aspectmap(reviews):
         
         reviews2['年齢'] = age_list
         reviews2['性別'] = seibetsu_list
-        reviews2['所属'] = zokusei_list 
+        reviews2['職業'] = zokusei_list 
         for asp in aspects:
             asp_list = []
             for s in reviews[asp]:
@@ -177,9 +177,9 @@ def get_aspectmap(reviews):
                 data2[str(v)][a]['positive'] = len(v_df[v_df[a]=='positive'])
                 data2[str(v)][a]['negative'] = len(v_df[v_df[a]=='negative'])
 
-        for v in reviews2['所属'].unique():
+        for v in reviews2['職業'].unique():
 
-            v_df = reviews2[reviews2['所属'] == v]
+            v_df = reviews2[reviews2['職業'] == v]
             for a in aspects:
                 data2[str(v)][a]['positive'] = len(v_df[v_df[a]=='positive'])
                 data2[str(v)][a]['negative'] = len(v_df[v_df[a]=='negative'])
@@ -190,7 +190,7 @@ def get_aspectmap(reviews):
 
         for i in range(len(reviews2)):
             age = reviews2['年齢'][i]
-            zokusei = reviews2['所属'][i]
+            zokusei = reviews2['職業'][i]
             seibetsu = reviews2['性別'][i]
             age = str(10 * int(age / 10))
 
@@ -226,7 +226,7 @@ def get_aspectmap(reviews):
     layout = Layout(plot_bgcolor='rgba(0,0,0,0)')
     fig = go.Figure(layout=layout)
     fig.add_trace(go.Heatmap(z=st.session_state['aspect_df'], x=st.session_state['aspect_df'].columns, y=st.session_state['aspect_df'].index, colorscale='blues'))
-    fig.update_layout(height=700, width=700, title='項目別ヒートマップ')
+    fig.update_layout(height=700, width=700, title='属性項目可視化マップ')
     st.plotly_chart(fig, use_container_width=True)
 
 def get_seibetsu(reviews, col, leg):
@@ -249,10 +249,10 @@ def get_seibetsu(reviews, col, leg):
 
 def get_shozoku(reviews, col, leg):
     
-    shozoku_label = reviews['所属'].unique()
+    shozoku_label = reviews['職業'].unique()
     shozoku = []
     for s in shozoku_label:
-        shozoku.append(len(reviews[reviews['所属']==s]))
+        shozoku.append(len(reviews[reviews['職業']==s]))
     fig = go.Figure(go.Pie(
         sort=True,
         direction ='clockwise', 
@@ -260,7 +260,7 @@ def get_shozoku(reviews, col, leg):
         labels = shozoku_label,
         texttemplate = "%{label}: %{value:s}人 <br>(%{percent})",
         textposition = "inside"))
-    fig.update_layout(title='所属可視化円グラフ')
+    fig.update_layout(title='職業可視化円グラフ')
     if leg:
         fig.update_layout(showlegend=False)
     col.plotly_chart(fig, use_container_width=True)
