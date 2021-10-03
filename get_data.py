@@ -1,6 +1,7 @@
 #import streamlit as st
 import datetime
 import pandas as pd
+from stqdm import stqdm
 
 def age(year, month, day):
     today = datetime.date.today()
@@ -22,7 +23,7 @@ def get_data(db, user_name, b_or_c):
     docs = query.get()
 
     data = []
-    for doc in docs:
+    for doc in stqdm(docs):
         datum = {}
         review_data = doc.to_dict()
         
