@@ -128,6 +128,7 @@ def get_q_detail(file):
     if logout_button:
         st.session_state['login'] = 0
 
+
     
 
     show_all = st.sidebar.radio('レビューの絞り込み', options=['しない', 'する'])
@@ -135,6 +136,12 @@ def get_q_detail(file):
         show_df = st.session_state['file_review'][['年齢', '性別', '職業', 'レビュー', '星評価', '居住地', 'date']]
         show_df['index'] = [i+1 for i in range(len(show_df))]
         show_df = show_df.set_index('index')
+        csv = show_df.to_csv().encode('shift-jis'')
+        st.download_button(
+            "csv Download",
+            csv,
+            "user_data.csv"
+            )
         st.table(show_df)
     else:
         st.session_state['file_review'] = st.session_state['file_review'][review_columns]
@@ -188,6 +195,13 @@ def get_q_detail(file):
         show_df = show_df.rename(columns={'属性': '職業'})
         show_df['index'] = [i+1 for i in range(len(show_df))]
         show_df = show_df.set_index('index')
-        st.table(show_df[['年齢', '性別', '職業', 'レビュー', '星評価', '居住地', 'date']])
+        show_df=show_df[['年齢', '性別', '職業', 'レビュー', '星評価', '居住地', 'date']]
+        csv = show_df.to_csv().encode('shift-jis')
+        st.download_button(
+            "csv Download",
+            csv,
+            "user_data.csv"
+            )
+        st.table(show_df)
         st.sidebar.write('レビュー表示件数：' + str(len(show_df)), ' 件')
     #st.table(st.session_state['file_review'][['年齢', '性別', '職業', 'レビュー']])
