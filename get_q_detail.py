@@ -96,7 +96,7 @@ def daterange(_start, _end):
 
 pd.get_option("display.max_columns")
 def get_q_detail(file):
-    st.write(st.session_state['file'])
+    #st.write(st.session_state['file'])
     if 'file_review' not in st.session_state:
         file_review = file[file['Ambience#Decoration']!='-']
         st.session_state['file_review'] = file_review[['年齢', '性別', '所属', 'レビュー']]
@@ -112,7 +112,7 @@ def get_q_detail(file):
         
         st.session_state['CONTENT'] = CONTENT
 
-    st.dataframe(st.session_state['file_review'])
+    #st.dataframe(st.session_state['file_review'])
     if 'CONTENT' not in st.session_state:
         keys = []
         for i in st.session_state['file_review']['レビュー']:
@@ -137,7 +137,7 @@ def get_q_detail(file):
         st.table(show_df)
     else:
         st.session_state['file_review'] = st.session_state['file_review'][review_columns]
-        st.dataframe(st.session_state['file_review'])
+        #st.dataframe(st.session_state['file_review'])
         start_ = st.session_state['file_review']['date'].min()
         end_ = st.session_state['file_review']['date'].max()
     
