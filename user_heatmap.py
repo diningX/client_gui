@@ -6,7 +6,6 @@ from plotly.graph_objects import Layout
 
 
 
-
 aspects = ['Location#Transportation', 'Location#Downtown',
         'Location#Easy_to_find', 'Service#Queue', 'Service#Hospitality',
         'Service#Parking', 'Service#Timely', 'Price#Level',

@@ -11,6 +11,7 @@ from get_q_detail import get_q_detail
 import os
 import json
 from secret.secret import keys as KEYS
+from stqdm import stqdm
 
 
 if not firebase_admin._apps:
@@ -55,7 +56,7 @@ if st.session_state['login'] == 0:
     query = st.session_state['db'].collection(info_pass_list[branch_or_client])
     docs = query.get()
     login_pass_list = {}
-    for d in docs:
+    for d in stqdm(docs):
         doc = d.to_dict()
         login_pass_list[doc['user_name']] = doc['password']
     #st.write(login_pass_list)
