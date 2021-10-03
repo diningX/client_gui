@@ -60,7 +60,7 @@ def make_df_new(df, term):
     df_new=pd.merge(date,df_new,on='date', how='outer').drop('trash',axis=1)
     
     
-    for name in ['所属','性別']:
+    for name in ['職業','性別']:
         dfb=df[['date',name]]
         dfb['num']=1
         dfb=dfb.groupby(['date',name]).sum()

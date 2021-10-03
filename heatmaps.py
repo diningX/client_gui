@@ -42,13 +42,13 @@ def heatmaps(file):
     logout_button = st.sidebar.button('log out')
     if logout_button:
         st.session_state['login'] = 0
-    st.dataframe(file[['年齢', '性別', '所属', 'レビュー']])
+    st.dataframe(file[['年齢', '性別', '職業', 'レビュー']])
     
     heat_matrix = get_heat_matrix(file)
     
     if 'file_review' not in st.session_state:
         file_review = file[file['Ambience#Decoration']!='-']
-        st.session_state['file_review'] = file_review[['年齢', '性別', '所属', 'レビュー']]
+        st.session_state['file_review'] = file_review[['年齢', '性別', '職業', 'レビュー']]
         keys = []
         for i in st.session_state['file_review']['レビュー']:
             keys.append(get_hinshi(i))
@@ -60,15 +60,15 @@ def heatmaps(file):
 
     options = st.multiselect(
     '可視化する図を選んでください',
-    ['客層ヒートマップ', '星評価ヒートマップ', '所属項目可視化マップ', '来客者性別情報円グラフ', '来客者所属情報円グラフ', '来客者年齢情報円グラフ', '来客者居住地情報円グラフ', '来客者星評価情報円グラフ', '項目別店舗評価'])
+    ['客層ヒートマップ', '星評価ヒートマップ', '属性項目可視化マップ', '来客者性別情報円グラフ', '来客者職業情報円グラフ', '来客者年齢情報円グラフ', '来客者居住地情報円グラフ', '来客者星評価情報円グラフ', '項目別店舗評価'])
 
     options_side = st.sidebar.multiselect(
     '可視化する円グラフを選んでください',
-    ['来客者性別情報円グラフ', '来客者所属情報円グラフ', '来客者年齢情報円グラフ', '来客者居住地情報円グラフ', '来客者星評価情報円グラフ', '頻出単語'])
+    ['来客者性別情報円グラフ', '来客者職業情報円グラフ', '来客者年齢情報円グラフ', '来客者居住地情報円グラフ', '来客者星評価情報円グラフ', '頻出単語'])
     if '来客者性別情報円グラフ' in options_side:
         get_seibetsu(file, st.sidebar, True)
     
-    if '来客者所属情報円グラフ' in options_side:
+    if '来客者職業情報円グラフ' in options_side:
         get_shozoku(file, st.sidebar, True)
     
     if '来客者年齢情報円グラフ' in options_side:
@@ -86,7 +86,7 @@ def heatmaps(file):
             get_freq_words(st.session_state['CONTENT'], num, st.sidebar)
     options2 = options.copy()
     for i in options:
-        if i in ['客層ヒートマップ', '星評価ヒートマップ', '所属項目可視化マップ', '項目別店舗評価']:
+        if i in ['客層ヒートマップ', '星評価ヒートマップ', '属性項目可視化マップ', '項目別店舗評価']:
             options2.remove(i)
 
     left_column,right_column = st.columns(2)
@@ -105,13 +105,13 @@ def heatmaps(file):
     if '星評価ヒートマップ' in options:
         get_starmap(file, heat_matrix)
 
-    if '所属項目可視化マップ' in options:
+    if '属性項目可視化マップ' in options:
         get_aspectmap(file_review)
 
     if '来客者性別情報円グラフ' in options:
         get_seibetsu(file, st, False)
     
-    if '来客者所属情報円グラフ' in options:
+    if '来客者職業情報円グラフ' in options:
         get_shozoku(file, st, False)
     
     if '来客者年齢情報円グラフ' in options:
