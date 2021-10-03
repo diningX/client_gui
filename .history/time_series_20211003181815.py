@@ -135,7 +135,7 @@ def make_df_nageposi(df,term):
                 newdf[c][i]=0
     newdf=pd.merge(date,newdf,on='date', how='outer').drop('trash',axis=1)
 
-    aspects_japanese = ["立地#アクセスの良さ","立地#都心・繁華街にあるか","立地#見つけやすいか", "サービス#入店までの待ち時間", "サービス#接客", "サービス#駐車場の利便性", 
+    aspects_japanese = ["場所#アクセスの良さ","場所#都心・繁華街にあるか","場所#見つけやすいか", "サービス#入店までの待ち時間", "サービス#接客", "サービス#駐車場の利便性", 
                     "サービス#料理の提供時間", "価格#水準", "価格#コストパフォーマンス", "価格#割引について", "雰囲気#装飾・雰囲気", "雰囲気#音楽・ノイズ", "雰囲気#店内・席の広さ",
                     "雰囲気#清潔感", "料理#分量", "料理#味", "料理#見た目", "料理#おすすめできるか"]
     list=['Location#Transportation', 'Location#Downtown',
@@ -144,9 +144,10 @@ def make_df_nageposi(df,term):
            'Price#Cost_effective', 'Price#Discount', 'Ambience#Decoration',
            'Ambience#Noise', 'Ambience#Space', 'Ambience#Sanitary', 'Food#Portion',
            'Food#Taste', 'Food#Appearance', 'Food#Recommend']
-    for n in range(len(list)):
-        newdf=newdf.rename(columns={list[n] :aspects_japanese[n]})
+    for old,new in zip(list,aspects_japanese):
+        newdf.rename(columns={old : new})
 
+   
     return newdf
 
 def make_plot(df_all):
@@ -218,12 +219,13 @@ def time_series(df1):
         df_np = make_df_nageposi(df1, 'M')
     not_star = [i for i in df_all.columns if i!='星評価']
     
+   
+    st.dataframe(df_np)
 
 
     #df_all['星評価'] = df_all['星評価'] / df_all[not_star].sum(axis=1)
 
-
-    names = st.multiselect('星評価、職業、年齢',df_all.columns)
+    names = st.multiselect('項目を選択してください',df_all.columns)
     fig = go.Figure()
     for name in names:
         fig.add_trace(go.Scatter(y=df_all[name],x=df_all.index, name=name))
@@ -239,9 +241,8 @@ def time_series(df1):
 
     
 
- 
-    
-    names = st.multiselect('アンケートにおける『ポジティブな回答の割合』を1から-1の間で表しています。1に近づくほどポジティブな回答が多いです。',df_np.columns)
+
+    names = st.multiselect('項目を選択してください',df_np.columns)
 
     fig2= go.Figure()
     for name in names:

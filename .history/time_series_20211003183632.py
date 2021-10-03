@@ -255,6 +255,7 @@ def time_series(df1):
         fig2.update_xaxes(dtick='M1')
     
     st.plotly_chart(fig2, use_container_width=True)
+    st.write('1から-1の間で1に近づくほどポジティブな回答が多いです。')
 
 
     

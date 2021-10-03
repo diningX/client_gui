@@ -14,7 +14,7 @@ aspects = ['Location#Transportation', 'Location#Downtown',
         'Ambience#Noise', 'Ambience#Space', 'Ambience#Sanitary', 'Food#Portion',
         'Food#Taste', 'Food#Appearance', 'Food#Recommend']
 
-aspects_japanese = ["立地#アクセスの良さ","立地#都心・繁華街にあるか","立地#見つけやすいか", "サービス#入店までの待ち時間", "サービス#接客", "サービス#駐車場の利便性", 
+aspects_japanese = ["場所#アクセスの良さ","場所#都心・繁華街にあるか","場所#見つけやすいか", "サービス#入店までの待ち時間", "サービス#接客", "サービス#駐車場の利便性", 
                     "サービス#料理の提供時間", "価格#水準", "価格#コストパフォーマンス", "価格#割引について", "雰囲気#装飾・雰囲気", "雰囲気#音楽・ノイズ", "雰囲気#店内・席の広さ",
                     "雰囲気#清潔感", "料理#分量", "料理#味", "料理#見た目", "料理#おすすめできるか"]
 

@@ -222,8 +222,8 @@ def time_series(df1):
 
     #df_all['星評価'] = df_all['星評価'] / df_all[not_star].sum(axis=1)
 
-
-    names = st.multiselect('星評価、職業、年齢',df_all.columns)
+    st.write('星評価と')
+    names = st.multiselect('項目を選択してください',df_all.columns)
     fig = go.Figure()
     for name in names:
         fig.add_trace(go.Scatter(y=df_all[name],x=df_all.index, name=name))
@@ -239,9 +239,9 @@ def time_series(df1):
 
     
 
- 
-    
-    names = st.multiselect('アンケートにおける『ポジティブな回答の割合』を1から-1の間で表しています。1に近づくほどポジティブな回答が多いです。',df_np.columns)
+    st.write('ポジティブ/ネガティブ+ポジティブを表示')
+    st.write('1から-1の間で1に近づくほどポジティブが多いです。')
+    names = st.multiselect('項目を選択してください',df_np.columns)
 
     fig2= go.Figure()
     for name in names:

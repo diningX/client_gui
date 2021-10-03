@@ -94,8 +94,8 @@ def make_df_new(df, term):
     
     return df_new
 
-def make_df_nageposi(df,term):
-    date=make_term_data(df, term)
+def make_df_nageposi(d):
+    
     list=['date', 'Location#Transportation', 'Location#Downtown',
            'Location#Easy_to_find', 'Service#Queue', 'Service#Hospitality',
            'Service#Parking', 'Service#Timely', 'Price#Level',
@@ -134,19 +134,6 @@ def make_df_nageposi(df,term):
             else:
                 newdf[c][i]=0
     newdf=pd.merge(date,newdf,on='date', how='outer').drop('trash',axis=1)
-
-    aspects_japanese = ["立地#アクセスの良さ","立地#都心・繁華街にあるか","立地#見つけやすいか", "サービス#入店までの待ち時間", "サービス#接客", "サービス#駐車場の利便性", 
-                    "サービス#料理の提供時間", "価格#水準", "価格#コストパフォーマンス", "価格#割引について", "雰囲気#装飾・雰囲気", "雰囲気#音楽・ノイズ", "雰囲気#店内・席の広さ",
-                    "雰囲気#清潔感", "料理#分量", "料理#味", "料理#見た目", "料理#おすすめできるか"]
-    list=['Location#Transportation', 'Location#Downtown',
-           'Location#Easy_to_find', 'Service#Queue', 'Service#Hospitality',
-           'Service#Parking', 'Service#Timely', 'Price#Level',
-           'Price#Cost_effective', 'Price#Discount', 'Ambience#Decoration',
-           'Ambience#Noise', 'Ambience#Space', 'Ambience#Sanitary', 'Food#Portion',
-           'Food#Taste', 'Food#Appearance', 'Food#Recommend']
-    for n in range(len(list)):
-        newdf=newdf.rename(columns={list[n] :aspects_japanese[n]})
-
     return newdf
 
 def make_plot(df_all):
@@ -212,18 +199,17 @@ def time_series(df1):
         df_np= make_df_nageposi(df1,'D')
     elif term == '1週間':
         df_all = make_df_new(df1, 'W')
-        df_np = make_df_nageposi(df1, 'W')
     else:
         df_all = make_df_new(df1, 'M')
-        df_np = make_df_nageposi(df1, 'M')
     not_star = [i for i in df_all.columns if i!='星評価']
     
+   
+    # st.dataframe(df_all)
 
 
     #df_all['星評価'] = df_all['星評価'] / df_all[not_star].sum(axis=1)
 
-
-    names = st.multiselect('星評価、職業、年齢',df_all.columns)
+    names = st.multiselect('項目を選択してください',df_all.columns)
     fig = go.Figure()
     for name in names:
         fig.add_trace(go.Scatter(y=df_all[name],x=df_all.index, name=name))
@@ -237,24 +223,19 @@ def time_series(df1):
     
     st.plotly_chart(fig, use_container_width=True)
 
-    
-
- 
-    
-    names = st.multiselect('アンケートにおける『ポジティブな回答の割合』を1から-1の間で表しています。1に近づくほどポジティブな回答が多いです。',df_np.columns)
-
-    fig2= go.Figure()
+    names = st.multiselect('項目を選択してください',df_all.columns)
+    fig = go.Figure()
     for name in names:
-        fig2.add_trace(go.Scatter(y=df_np[name],x=df_np.index, name=name))
-    fig2.update_layout(width=900, height=400)
+        fig.add_trace(go.Scatter(y=df_all[name],x=df_all.index, name=name))
+    fig.update_layout(width=900, height=400)
     if term == '1日':
-        fig2.update_xaxes(dtick=7 * 86400000.0)
+        fig.update_xaxes(dtick=7 * 86400000.0)
     elif term == '1週間':
-        fig2.update_xaxes(dtick=14 * 86400000.0)
+        fig.update_xaxes(dtick=14 * 86400000.0)
     else:
-        fig2.update_xaxes(dtick='M1')
+        fig.update_xaxes(dtick='M1')
     
-    st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True)
 
 
     

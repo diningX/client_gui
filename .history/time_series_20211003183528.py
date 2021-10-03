@@ -241,7 +241,7 @@ def time_series(df1):
 
  
     
-    names = st.multiselect('アンケートにおける『ポジティブな回答の割合』を1から-1の間で表しています。1に近づくほどポジティブな回答が多いです。',df_np.columns)
+    names = st.multiselect('アンケートにおける『ポジティブな回答の割合』を1から-1の間で表しています。'＋/n,df_np.columns)
 
     fig2= go.Figure()
     for name in names:
@@ -255,6 +255,7 @@ def time_series(df1):
         fig2.update_xaxes(dtick='M1')
     
     st.plotly_chart(fig2, use_container_width=True)
+    st.write('1から-1の間で1に近づくほどポジティブな回答が多いです。')
 
 
     

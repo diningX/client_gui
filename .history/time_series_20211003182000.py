@@ -144,8 +144,8 @@ def make_df_nageposi(df,term):
            'Price#Cost_effective', 'Price#Discount', 'Ambience#Decoration',
            'Ambience#Noise', 'Ambience#Space', 'Ambience#Sanitary', 'Food#Portion',
            'Food#Taste', 'Food#Appearance', 'Food#Recommend']
-    for n in range(len(list)):
-        newdf=newdf.rename(columns={list[n] :aspects_japanese[n]})
+    for old,new in zip(list,aspects_japanese):
+        newdf.rename(columns={old「n : new})
 
     return newdf
 
@@ -218,12 +218,13 @@ def time_series(df1):
         df_np = make_df_nageposi(df1, 'M')
     not_star = [i for i in df_all.columns if i!='星評価']
     
+   
+    st.dataframe(df_np)
 
 
     #df_all['星評価'] = df_all['星評価'] / df_all[not_star].sum(axis=1)
 
-
-    names = st.multiselect('星評価、職業、年齢',df_all.columns)
+    names = st.multiselect('項目を選択してください',df_all.columns)
     fig = go.Figure()
     for name in names:
         fig.add_trace(go.Scatter(y=df_all[name],x=df_all.index, name=name))
@@ -239,9 +240,8 @@ def time_series(df1):
 
     
 
- 
-    
-    names = st.multiselect('アンケートにおける『ポジティブな回答の割合』を1から-1の間で表しています。1に近づくほどポジティブな回答が多いです。',df_np.columns)
+
+    names = st.multiselect('項目を選択してください',df_np.columns)
 
     fig2= go.Figure()
     for name in names:

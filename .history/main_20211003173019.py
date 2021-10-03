@@ -41,7 +41,7 @@ if not firebase_admin._apps:
     #print('=========================')
     #print(json_file)
     #print('=========================')
-    keys=KEYS
+    
     cred = credentials.Certificate(keys)
     firebase_admin.initialize_app(cred)
 
