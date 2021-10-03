@@ -50,8 +50,6 @@ def make_term_data(df, term):
     return date
 
 def make_df_new(df, term):
-
-
     date=make_term_data(df, term)
     df["date"] = pd.to_datetime(df["date"]) #datetime型にする
 
@@ -95,6 +93,61 @@ def make_df_new(df, term):
     
     
     return df_new
+
+def make_df_nageposi(df,term):
+    date=make_term_data(df, term)
+    list=['date', 'Location#Transportation', 'Location#Downtown',
+           'Location#Easy_to_find', 'Service#Queue', 'Service#Hospitality',
+           'Service#Parking', 'Service#Timely', 'Price#Level',
+           'Price#Cost_effective', 'Price#Discount', 'Ambience#Decoration',
+           'Ambience#Noise', 'Ambience#Space', 'Ambience#Sanitary', 'Food#Portion',
+           'Food#Taste', 'Food#Appearance', 'Food#Recommend']
+    dfa=df[list]
+    dfa=dfa.set_index('date')
+    columns=dfa.columns
+    for c in columns:
+        for i in range(0,len(dfa)):
+            if dfa[c][i]=='not_mentioned':
+                dfa[c][i]=0
+            elif dfa[c][i]=='positive':
+                dfa[c][i]=1
+            else:
+                dfa[c][i]=-1
+    dfa=dfa.reset_index()
+    dfa["date"] = pd.to_datetime(dfa["date"]) #datetime型にする
+    dfa=dfa.groupby('date').agg(['sum','count'])
+    new=pd.DataFrame(index=dfa.index, columns=columns)
+    for c in columns:
+        for i in range(0,len(dfa)):
+            if dfa[c]['count'][i]!=0:
+    #             print(new[c][i])
+                new[c][i]= dfa[c]['sum'][i]/dfa[c]['count'][i]
+            else:
+                new[c][i]=0
+
+    new=new.resample(term).agg(['sum','count'])
+    newdf=pd.DataFrame(index=new.index, columns=columns)
+    for c in columns:
+        for i in range(0,len(new)):
+            if new[c]['count'][i]!=0:
+                newdf[c][i]= new[c]['sum'][i]/new[c]['count'][i]
+            else:
+                newdf[c][i]=0
+    newdf=pd.merge(date,newdf,on='date', how='outer').drop('trash',axis=1)
+
+    aspects_japanese = ["立地#アクセスの良さ","立地#都心・繁華街にあるか","立地#見つけやすいか", "サービス#入店までの待ち時間", "サービス#接客", "サービス#駐車場の利便性", 
+                    "サービス#料理の提供時間", "価格#水準", "価格#コストパフォーマンス", "価格#割引について", "雰囲気#装飾・雰囲気", "雰囲気#音楽・ノイズ", "雰囲気#店内・席の広さ",
+                    "雰囲気#清潔感", "料理#分量", "料理#味", "料理#見た目", "料理#おすすめできるか"]
+    list=['Location#Transportation', 'Location#Downtown',
+           'Location#Easy_to_find', 'Service#Queue', 'Service#Hospitality',
+           'Service#Parking', 'Service#Timely', 'Price#Level',
+           'Price#Cost_effective', 'Price#Discount', 'Ambience#Decoration',
+           'Ambience#Noise', 'Ambience#Space', 'Ambience#Sanitary', 'Food#Portion',
+           'Food#Taste', 'Food#Appearance', 'Food#Recommend']
+    for n in range(len(list)):
+        newdf=newdf.rename(columns={list[n] :aspects_japanese[n]})
+
+    return newdf
 
 def make_plot(df_all):
 
@@ -156,19 +209,21 @@ def time_series(df1):
     term = st.selectbox('期間選択', options=['1日', '1週間', '1ヶ月'])
     if term == '1日':
         df_all = make_df_new(df1, 'D')
+        df_np= make_df_nageposi(df1,'D')
     elif term == '1週間':
         df_all = make_df_new(df1, 'W')
+        df_np = make_df_nageposi(df1, 'W')
     else:
         df_all = make_df_new(df1, 'M')
+        df_np = make_df_nageposi(df1, 'M')
     not_star = [i for i in df_all.columns if i!='星評価']
-    
-   
     
 
 
     #df_all['星評価'] = df_all['星評価'] / df_all[not_star].sum(axis=1)
 
-    names = st.multiselect('項目を選択してください',df_all.columns)
+
+    names = st.multiselect('星評価、職業、年齢',df_all.columns)
     fig = go.Figure()
     for name in names:
         fig.add_trace(go.Scatter(y=df_all[name],x=df_all.index, name=name))
@@ -181,4 +236,26 @@ def time_series(df1):
         fig.update_xaxes(dtick='M1')
     
     st.plotly_chart(fig, use_container_width=True)
+
+    
+
+ 
+    
+    names = st.multiselect('アンケートにおける『ポジティブな回答の割合』を1から-1の間で表しています。1に近づくほどポジティブな回答が多いです。',df_np.columns)
+
+    fig2= go.Figure()
+    for name in names:
+        fig2.add_trace(go.Scatter(y=df_np[name],x=df_np.index, name=name))
+    fig2.update_layout(width=900, height=400)
+    if term == '1日':
+        fig2.update_xaxes(dtick=7 * 86400000.0)
+    elif term == '1週間':
+        fig2.update_xaxes(dtick=14 * 86400000.0)
+    else:
+        fig2.update_xaxes(dtick='M1')
+    
+    st.plotly_chart(fig2, use_container_width=True)
+
+
+    
 

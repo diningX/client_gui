@@ -10,7 +10,7 @@ from lottery_settings import lottery_settings
 from get_q_detail import get_q_detail
 import os
 import json
-from secret.secret import keys as KEYS 
+from secret.secret import keys as KEYS
 
 
 if not firebase_admin._apps:
@@ -41,7 +41,7 @@ if not firebase_admin._apps:
     #print('=========================')
     #print(json_file)
     #print('=========================')
-
+    keys=KEYS
     cred = credentials.Certificate(keys)
     firebase_admin.initialize_app(cred)
 
