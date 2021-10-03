@@ -1,4 +1,4 @@
 .env
-secret/*
-.history/*
-__pycache__/*
+secret/
+.history/
+__pycache__/
