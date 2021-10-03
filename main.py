@@ -10,9 +10,7 @@ from lottery_settings import lottery_settings
 from get_q_detail import get_q_detail
 import os
 import json
-from secret.secret import keys as KEYS
 from stqdm import stqdm
-
 
 if not firebase_admin._apps:
 
@@ -30,7 +28,9 @@ if not firebase_admin._apps:
     "auth_provider_x509_cert_url": os.environ.get('auth_provider_x509_cert_url'),
     "client_x509_cert_url": os.environ.get('client_x509_cert_url')
     }
-    keys = KEYS
+    if os.environ.get('isDeployment') is None:
+        from secret.secret import keys as KEYS
+        keys = KEYS
     
     #print(type(keys))
 
@@ -42,10 +42,9 @@ if not firebase_admin._apps:
     #print('=========================')
     #print(json_file)
     #print('=========================')
-    keys=KEYS
     cred = credentials.Certificate(keys)
     firebase_admin.initialize_app(cred)
-    print('aaaa')
+    
 
 if 'db' not in st.session_state:
     st.session_state['db'] = firestore.client()
