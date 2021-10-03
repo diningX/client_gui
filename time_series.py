@@ -149,27 +149,6 @@ def make_df_nageposi(df,term):
 
     return newdf
 
-<<<<<<< HEAD
-def make_plot(df_all):
-
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(y=df_all['女性'],x=df_all.index, name='女'))
-    fig.add_trace(go.Scatter(y=df_all['男性'],x=df_all.index ,name='男性'))
-    fig.show()
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(y=df_all['星評価'],x=df_all.index, name='配列の名前'))
-    fig.update_layout(legend_title_text='タイトル')
-    fig.show()
-    fig = go.Figure()
-    for name in df['職業'].unique().tolist():
-        fig.add_trace(go.Scatter(y=df_all[name],x=df_all.index, name=name))
-    fig.show()
-    fig = go.Figure()
-    labels = [ '{0} – {1}'.format(i, i + 10) for i in range(0, 100, 10) ]
-    for name in labels:
-        fig.add_trace(go.Scatter(y=df_all[name],x=df_all.index, name=name))
-    fig.show()
-=======
 # def make_plot(df_all):
 
 #     fig = go.Figure()
@@ -189,7 +168,6 @@ def make_plot(df_all):
 #     for name in labels:
 #         fig.add_trace(go.Scatter(y=df_all[name],x=df_all.index, name=name))
 #     fig.show()
->>>>>>> origin/stqdm
 
 
 def time_series(df1):
