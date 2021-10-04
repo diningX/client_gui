@@ -6,6 +6,7 @@ import numpy as np
 from datetime import datetime as dt
 from datetime import timedelta
 from stqdm import stqdm
+import codecs
 
 review_columns = ['年齢', '性別', '職業', 'レビュー', 'janome', '星評価', '居住地', 'date']
 def get_hinshi(text):
@@ -136,7 +137,11 @@ def get_q_detail(file):
         show_df = st.session_state['file_review'][['年齢', '性別', '職業', 'レビュー', '星評価', '居住地', 'date']]
         show_df['index'] = [i+1 for i in range(len(show_df))]
         show_df = show_df.set_index('index')
-        csv = show_df.to_csv().encode('shift-jis')
+
+        # スペースに置き換えてみる。
+        codecs.register_error('error_handler', lambda e: ('', e.end))
+        csv = show_df.to_csv().encode('shift_jis', errors='error_handler') 
+
         st.download_button(
             "csv Download",
             csv,
@@ -196,7 +201,9 @@ def get_q_detail(file):
         show_df['index'] = [i+1 for i in range(len(show_df))]
         show_df = show_df.set_index('index')
         show_df=show_df[['年齢', '性別', '職業', 'レビュー', '星評価', '居住地', 'date']]
-        csv = show_df.to_csv().encode('shift-jis')
+        # スペースに置き換えてみる。
+        codecs.register_error('error_handler', lambda e: ('', e.end))
+        csv = show_df.to_csv().encode('shift_jis', errors='error_handler') 
         st.download_button(
             "csv Download",
             csv,
