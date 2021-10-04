@@ -142,9 +142,9 @@ def get_q_detail(file):
         codecs.register_error('error_handler', lambda e: ('', e.end))
         csv = show_df.to_csv().encode('shift_jis', errors='error_handler') 
         st.download_button(
-            "csv Download",
+            "csv ダウンロード",
             csv,
-            "user_data.csv"
+            "レビューデータ.csv"
             )
         st.table(show_df)
     else:
