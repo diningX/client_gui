@@ -141,6 +141,7 @@ def get_q_detail(file):
         # スペースに置き換えてみる。
         codecs.register_error('error_handler', lambda e: ('', e.end))
         csv = show_df.to_csv().encode('shift_jis', errors='error_handler') 
+
         st.download_button(
             "csv Download",
             csv,
