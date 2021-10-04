@@ -136,7 +136,7 @@ def get_q_detail(file):
         show_df = st.session_state['file_review'][['年齢', '性別', '職業', 'レビュー', '星評価', '居住地', 'date']]
         show_df['index'] = [i+1 for i in range(len(show_df))]
         show_df = show_df.set_index('index')
-        csv = show_df.to_csv().encode('shift-jis'')
+        csv = show_df.to_csv().encode('shift-jis')
         st.download_button(
             "csv Download",
             csv,
